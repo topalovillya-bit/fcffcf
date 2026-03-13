@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Fenomen Hub Premium v3</title>
+  <style>
+    :root{
+      --bg:#f4f7fb; --bg2:#edf3fa; --panel:#ffffff; --panel2:#f8fbff; --text:#152233; --muted:#6b7c93;
+      --line:#dce5ef; --red:#d73933; --gold:#d4a43a; --green:#1ea06f; --orange:#de7f10; --blue:#2e6bff;
+      --shadow:0 12px 28px rgba(15,23,42,.08); --radius:22px; --safe-b:env(safe-area-inset-bottom,0px); --safe-t:env(safe-area-inset-top,0px);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} html,body{margin:0;padding:0}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 420px at 0% -10%, rgba(215,57,51,.10), transparent 42%),
+        radial-gradient(900px 360px at 100% 0%, rgba(212,164,58,.10), transparent 42%),
+        linear-gradient(180deg,var(--bg),var(--bg2));
+      min-height:100vh; overflow-x:hidden;
+    }
+    button,input,select,textarea{font:inherit}
+    button{
+      min-height:44px; border:none; border-radius:16px; padding:11px 14px; cursor:pointer; touch-action:manipulation;
+    }
+    input,select,textarea{
+      width:100%; min-height:44px; border:1px solid var(--line); border-radius:16px; padding:11px 14px;
+      background:#fff; color:var(--text); outline:none;
+    }
+    textarea{min-height:92px; resize:vertical}
+    .btn{background:#fff; border:1px solid var(--line); color:var(--text)}
+    .btn-primary{background:linear-gradient(135deg,var(--red),var(--gold)); color:#fff; font-weight:800}
+    .btn-green{background:linear-gradient(135deg,#1ea06f,#47bf8d); color:#fff; font-weight:800}
+    .btn-orange{background:linear-gradient(135deg,#de7f10,#f2aa3a); color:#fff; font-weight:800}
+    .btn-blue{background:linear-gradient(135deg,#2e6bff,#5d93ff); color:#fff; font-weight:800}
+    .btn-red{background:linear-gradient(135deg,#c92a2a,#ef5350); color:#fff; font-weight:800}
+    .app{max-width:1160px; margin:0 auto; padding:12px 12px calc(100px + var(--safe-b))}
+    .topbar{
+      position:sticky; top:0; z-index:25; padding-top:calc(8px + var(--safe-t)); margin:0 -12px 12px;
+      background:linear-gradient(180deg, rgba(244,247,251,.96), rgba(244,247,251,.82)); backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(15,23,42,.05);
+    }
+    .topbar-inner{max-width:1160px; margin:0 auto; padding:10px 12px 12px}
+    .brand{display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap}
+    .brand-main{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:50px; height:50px; border-radius:18px; display:grid; place-items:center; color:#fff; font-weight:900;
+      background:linear-gradient(135deg,var(--red),var(--gold)); box-shadow:var(--shadow)
+    }
+    .brand-title{font-size:28px; font-weight:900; line-height:1}
+    .brand-sub{font-size:12px; color:var(--muted); margin-top:6px}
+    .hero,.panel,.card{
+      background:var(--panel); border:1px solid rgba(15,23,42,.06); border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .hero{padding:16px; margin-bottom:14px}
+    .hero.hidden{display:none}
+    .panel,.card{padding:14px}
+    .title{font-size:18px; font-weight:900; margin:0}
+    .small{font-size:12px; color:var(--muted)}
+    .grid{display:grid; gap:12px}
+    .two{grid-template-columns:1fr 1fr}
+    .three{grid-template-columns:repeat(3,1fr)}
+    .four{grid-template-columns:repeat(4,1fr)}
+    .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .between{justify-content:space-between}
+    .list{display:flex; flex-direction:column; gap:10px}
+    .item{padding:12px; border-radius:18px; background:var(--panel2); border:1px solid var(--line)}
+    .hero-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:12px}
+    .stat{padding:12px; border-radius:18px; background:var(--panel2); border:1px solid var(--line)}
+    .stat .v{font-size:28px; font-weight:900}
+    .stat .l{font-size:12px; color:var(--muted); margin-top:4px}
+    .filters{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .filters.three{grid-template-columns:1fr 1fr 1fr}
+    .filters.four{grid-template-columns:1fr 1fr 1fr 1fr}
+    .chip{
+      display:inline-flex; gap:6px; align-items:center; padding:7px 10px; border-radius:999px;
+      background:#fff; border:1px solid var(--line); font-size:12px
+    }
+    .chip.ok{background:rgba(30,160,111,.10); border-color:rgba(30,160,111,.24)}
+    .chip.warn{background:rgba(222,127,16,.10); border-color:rgba(222,127,16,.24)}
+    .chip.bad{background:rgba(215,57,51,.10); border-color:rgba(215,57,51,.22)}
+    .section{display:none} .section.active{display:block}
+    .table-wrap{overflow:auto; border:1px solid var(--line); border-radius:18px; background:#fff}
+    table{width:100%; border-collapse:collapse; min-width:820px}
+    th,td{padding:11px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; font-size:13px}
+    th{position:sticky; top:0; z-index:1; background:#fffdf8; color:#734d07}
+    .bottom-nav{
+      position:fixed; left:10px; right:10px; bottom:10px; z-index:40; background:rgba(255,255,255,.94); backdrop-filter:blur(10px);
+      border:1px solid rgba(15,23,42,.08); border-radius:22px; box-shadow:0 18px 36px rgba(15,23,42,.14); padding:8px 8px calc(8px + var(--safe-b));
+    }
+    .bottom-scroll{display:flex; gap:8px; overflow:auto; scrollbar-width:none}
+    .bottom-scroll::-webkit-scrollbar{display:none}
+    .nav-btn{min-width:88px; padding:10px 12px; border-radius:16px; background:#fff; border:1px solid var(--line); color:var(--muted); font-size:12px; font-weight:800}
+    .nav-btn.active{background:linear-gradient(135deg,var(--red),var(--gold)); color:#fff; border-color:transparent}
+    .modal{
+      position:fixed; inset:0; z-index:70; background:rgba(15,23,42,.38); display:none; align-items:flex-end; justify-content:center; padding:10px
+    }
+    .modal.show{display:flex}
+    .sheet{width:min(760px,100%); max-height:88vh; overflow:auto; border-radius:24px 24px 18px 18px}
+    .empty{padding:18px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:18px; background:#fff}
+    .board{
+      position:relative; height:56vh; min-height:380px; border-radius:22px; overflow:hidden; border:1px solid rgba(255,255,255,.3);
+      background:linear-gradient(180deg,#178043,#106531); touch-action:none
+    }
+    .pitch-outline,.pitch-mid,.pitch-circle,.pitch-box-top,.pitch-box-bot{position:absolute}
+    .pitch-outline{inset:14px; border:2px solid rgba(255,255,255,.9); border-radius:18px}
+    .pitch-mid{top:14px; bottom:14px; left:50%; width:2px; transform:translateX(-50%); background:rgba(255,255,255,.92)}
+    .pitch-circle{left:50%; top:50%; width:94px; height:94px; transform:translate(-50%,-50%); border-radius:50%; border:2px solid rgba(255,255,255,.92)}
+    .pitch-box-top,.pitch-box-bot{left:50%; width:180px; height:72px; transform:translateX(-50%); border:2px solid rgba(255,255,255,.92)}
+    .pitch-box-top{top:14px; border-top:none}.pitch-box-bot{bottom:14px; border-bottom:none}
+    .marker{
+      position:absolute; transform:translate(-50%,-50%); width:48px; height:48px; border-radius:50%; display:grid; place-items:center;
+      font-weight:900; border:2px solid rgba(255,255,255,.95); box-shadow:0 10px 22px rgba(0,0,0,.25); touch-action:none
+    }
+    .marker.red{background:linear-gradient(135deg,#e24d45,#b81d1d); color:#fff}
+    .marker.gold{background:linear-gradient(135deg,#ffda7d,#d89a16); color:#172033}
+    .marker-label{
+      position:absolute; left:50%; top:calc(100% + 6px); transform:translateX(-50%); min-width:56px; max-width:90px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:11px; background:rgba(255,255,255,.94);
+      color:#172033; padding:4px 6px; border-radius:10px; border:1px solid rgba(15,23,42,.08)
+    }
+    @media (max-width:780px){
+      .hero-grid,.two,.three,.four,.filters,.filters.three,.filters.four{grid-template-columns:1fr}
+      .brand-title{font-size:23px}
+      .app{padding-bottom:106px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-main">
+          <div class="logo">F</div>
+          <div>
+            <div class="brand-title">Fenomen Hub Premium</div>
+            <div class="brand-sub">v3 • Матч-центр • Сезонна статистика • Турніри • Аналітика</div>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn" data-action="export-json">JSON</button>
+          <button class="btn" data-action="import-open">Імпорт</button>
+          <button class="btn" data-action="export-csv">CSV</button>
+          <input id="importFile" type="file" accept="application/json" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="hero" class="hero"></section>
+
+  <section id="section-dashboard" class="section active"></section>
+  <section id="section-players" class="section"></section>
+  <section id="section-attendance" class="section"></section>
+  <section id="section-payments" class="section"></section>
+  <section id="section-analytics" class="section"></section>
+  <section id="section-debtors" class="section"></section>
+  <section id="section-matchcenter" class="section"></section>
+  <section id="section-seasonstats" class="section"></section>
+  <section id="section-tournaments" class="section"></section>
+  <section id="section-calendar" class="section"></section>
+  <section id="section-rent" class="section"></section>
+  <section id="section-groups" class="section"></section>
+  <section id="section-trainers" class="section"></section>
+  <section id="section-tactics" class="section"></section>
+  <section id="section-admin" class="section"></section>
+  <section id="section-export" class="section"></section>
+</div>
+
+<nav class="bottom-nav"><div id="bottomNav" class="bottom-scroll"></div></nav>
+
+<div id="modal" class="modal">
+  <div class="sheet panel">
+    <div class="row between" style="margin-bottom:10px">
+      <div id="modalTitle" class="title">Деталі</div>
+      <button class="btn" data-action="close-modal">Закрити</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const STORAGE_KEY='fenomen_hub_premium_v3';
+const MONTHS=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+const WEEKDAYS=['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
+const TABS=[
+  ['dashboard','Головна'],['players','Гравці'],['attendance','Відмітка'],['payments','Оплати'],
+  ['analytics','Аналітика'],['debtors','Боржники'],['matchcenter','Матч-центр'],['seasonstats','Сезон'],
+  ['tournaments','Турніри'],['calendar','Календар'],['rent','Аренда'],['groups','Групи'],['trainers','Тренери'],
+  ['tactics','Тактика'],['admin','Адмін'],['export','Експорт']
+];
+const TRAINERS=[
+  {id:'t1',name:'Ілля Топалов',role:'Тренер / керівник',salary:30000},
+  {id:'t2',name:'Олександр Шипулов',role:'Тренер',salary:25000},
+  {id:'t3',name:'Михайло Шершень',role:'Тренер',salary:28000},
+  {id:'t4',name:'Наталія Шерчень',role:'Адміністратор',salary:20000}
+];
+const LOCATIONS=[
+  {id:'l1',name:'Блиставиця',trainer:'Ілля Топалов',price:1400,days:[1,3,5]},
+  {id:'l2',name:'Синяк',trainer:'Ілля Топалов',price:1200,days:[1,3,5]},
+  {id:'l3',name:'Бабинці',trainer:'Олександр Шипулов',price:1200,days:[2,4,6]},
+  {id:'l4',name:'Нове Залісся',trainer:'Олександр Шипулов',price:1000,days:[4,5]},
+  {id:'l5',name:'Луб’янка',trainer:'Ілля Топалов',price:1400,days:[2,4,6]},
+  {id:'l6',name:'Буча',trainer:'Михайло Шершень',price:1400,days:[2,4,6]}
+];
+const RAW=[['Чиренко Софія','Блиставиця'],['Денисюк Тимофій','Блиставиця'],['Денисюк Платон','Блиставиця'],['Головенець Лука','Блиставиця'],['Католіченко Влад','Блиставиця'],['Кулаков Ілля','Блиставиця'],['Сліпенко Степан','Блиставиця'],['Войтович Михайло','Блиставиця'],['Колесник Маргарита','Блиставиця'],['Ткачик Дарина','Блиставиця'],['Гребенюк Поліна','Блиставиця'],['Пелешок Андрій','Блиставиця'],['Шевченко Тимофій','Блиставиця'],['Католіченко Артем','Блиставиця'],['Круковець Матвій','Блиставиця'],['Семерок Ангеліна','Блиставиця'],['Пилипенко Артем','Блиставиця'],['Демченко Анна','Блиставиця'],['Прокаєва Анна','Блиставиця'],['Степанюк Матвій','Блиставиця'],['Степанюк Макар','Блиставиця'],['Міль Антон','Блиставиця'],['Фурманчук Богдан','Блиставиця'],['Туровський','Блиставиця'],['Слобожан Захар','Блиставиця'],['Запорожець Гліб','Блиставиця'],['Клименко Даніл','Блиставиця'],['Розлач Іван','Синяк'],['Космацький Даніель','Синяк'],['Ганжа Андрій','Синяк'],['Смірнов Назар','Синяк'],['Ратних Ярослав','Синяк'],['Гаврилов Гліб','Синяк'],['Корж Тимофій','Синяк'],['Шевчук Матвій','Синяк'],['Петренко Юрій','Синяк'],['Ганіцький Сергій','Синяк'],['Посох Дмитро','Синяк'],['Єриго Павло','Синяк'],['Приймак Владислав','Синяк'],['Лисенко Василь','Синяк'],['Травянко Тимур','Синяк'],['Зінченко Денис','Синяк'],['Хижняк Іван','Синяк'],['Колісніченко Мирослав','Синяк'],['Терещенко Іван','Синяк'],['Павлов Лев','Синяк'],['Лисенко Василь','Синяк'],['Щуренко Евгеній','Синяк'],['Теребій Давид','Синяк'],['Чамата Назар','Синяк'],['Федоренко Макар','Синяк'],['Лавицький Ростислав','Синяк'],['Лелека Нікіта','Синяк'],['Мармелюк Макар','Синяк'],['Мармелюк Iлля','Синяк'],['Архипенко Дмитро','Синяк'],['Коваленко Владислав','Синяк'],['Фалько Динил','Синяк'],['Стецюк Матвій','Синяк'],['Стецюк Назар','Синяк'],['Зінченко Валерія','Синяк'],['Безсмертний Олександр','Бабинці'],['Олексюк Віктор','Бабинці'],['Ткач Данііл','Бабинці'],['Щербаков Матвій','Бабинці'],['Павлюченко Кирилл','Бабинці'],['Ромашкін Богдан','Бабинці'],['Логвиненко Денис','Бабинці'],['Моргун Арсен','Бабинці'],['Гудков Андрій','Бабинці'],['Ренцевич Роман','Бабинці'],['Матейко Соломія','Бабинці'],['Кизим Дмитро','Бабинці'],['Іваненко Дмитро','Бабинці'],['Самусенко Максим','Бабинці'],['Прибильський Іван','Бабинці'],['Шкурка Олександр','Бабинці'],['Болілий Вадим','Бабинці'],['Дрондін Артем','Бабинці'],['Щелкунов Арсен','Бабинці'],['Примаченко Тимофіі','Бабинці'],['Кубицький Антон','Бабинці'],['Добривечор Артем','Бабинці'],['Мазепа Нікіта','Бабинці'],['Порубов Олексій','Бабинці'],['Мадяр Даніель','Бабинці'],['Яковенко Гліб','Бабинці'],['Конфорович','Бабинці'],['Лелека Нікіта','Бабинці'],['Стариш','Бабинці'],['Клєвцов Роман','Бабинці'],['Макарчук Артем','Бабинці'],['Булацький','Бабинці'],['Моісеєнко Артем','Бабинці'],['Сотніков Олександр','Бабинці'],['Реган Данил','Бабинці'],['Щербаков Тімур','Бабинці'],['Кравчук Тимофій','Бабинці'],['Вислоцький Артем','Бабинці'],['Романенко Роман','Нове Залісся'],['Кулакевич Захар','Нове Залісся'],['Лічман Дмитро','Нове Залісся'],['Плескань Даниїл','Нове Залісся'],['Рева Олександр','Нове Залісся'],['Гогсадзе Давид','Нове Залісся'],['Росовський Нікіта','Нове Залісся'],['Маслюківський Арсеній','Нове Залісся'],['Петрусенко Дмитро','Нове Залісся'],['Хрущ Ярослав','Нове Залісся'],['Гончаров Юрій','Нове Залісся'],['Тарай Тимофій','Нове Залісся']];
+const qs=s=>document.querySelector(s), qsa=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const today=()=>new Date();
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const ym=(y,m)=>`${y}-${String(m+1).padStart(2,'0')}`;
+const money=n=>`₴${Number(n||0)}`;
+const MARCH_IMPORT_MONTH='2026-03';
+const MARCH_IMPORT={"Чиренко Софія":{"location":"Блиставиця","amount":1400.0,"note":""},"Денисюк Тимофій":{"location":"Блиставиця","amount":1400.0,"note":""},"Денисюк Платон":{"location":"Блиставиця","amount":800.0,"note":"800 бо хворів з 23 по 28 та ще 5 днів звільнення, половина за грудень перенеслась у брезень "},"Головенець Лука":{"location":"Блиставиця","amount":1400.0,"note":""},"Католіченко Влад":{"location":"Блиставиця","amount":null,"note":"будуть оплачувати до 20го числа"},"Кулаков Ілля":{"location":"Блиставиця","amount":null,"note":"березень пропускає"},"Сліпенко Степан":{"location":"Блиставиця","amount":1260.0,"note":""},"Войтович Михайло":{"location":"Блиставиця","amount":null,"note":""},"Колесник Маргарита":{"location":"Блиставиця","amount":null,"note":""},"Ткачик Дарина":{"location":"Блиставиця","amount":1260.0,"note":""},"Гребенюк Поліна":{"location":"Блиставиця","amount":null,"note":"катя в вайбері"},"Пелешок Андрій":{"location":"Блиставиця","amount":1400.0,"note":""},"Шевченко Тимофій":{"location":"Блиставиця","amount":null,"note":""},"Католіченко Артем":{"location":"Блиставиця","amount":null,"note":""},"Круковець Матвій":{"location":"Блиставиця","amount":null,"note":""},"Семерок Ангеліна":{"location":"Блиставиця","amount":1400.0,"note":""},"Пилипенко Артем":{"location":"Блиставиця","amount":1400.0,"note":""},"Демченко Анна":{"location":"Блиставиця","amount":null,"note":""},"Прокаєва Анна":{"location":"Блиставиця","amount":null,"note":""},"Степанюк Матвій":{"location":"Блиставиця","amount":1400.0,"note":""},"Степанюк Макар":{"location":"Блиставиця","amount":1400.0,"note":""},"Міль Антон":{"location":"Блиставиця","amount":null,"note":""},"Фурманчук Богдан":{"location":"Блиставиця","amount":1400.0,"note":""},"Туровський":{"location":"Блиставиця","amount":1500.0,"note":"100 грн на квітень"},"Слобожан Захар":{"location":"Блиставиця","amount":1400.0,"note":""},"Запорожець Гліб":{"location":"Блиставиця","amount":null,"note":"Має перейти в Лубянку локацію"},"Клименко Даніл":{"location":"Блиставиця","amount":null,"note":"пропускає березень по хв"},"Розлач Іван":{"location":"Синяк","amount":1400.0,"note":""},"Космацький Даніель":{"location":"Синяк","amount":1260.0,"note":""},"Ганжа Андрій":{"location":"Синяк","amount":1260.0,"note":""},"Смірнов Назар":{"location":"Синяк","amount":1260.0,"note":""},"Ратних Ярослав":{"location":"Синяк","amount":null,"note":""},"Гаврилов Гліб":{"location":"Синяк","amount":null,"note":""},"Корж Тимофій":{"location":"Синяк","amount":1400.0,"note":""},"Шевчук Матвій":{"location":"Синяк","amount":1400.0,"note":""},"Петренко Юрій":{"location":"Синяк","amount":null,"note":""},"Ганіцький Сергій":{"location":"Синяк","amount":null,"note":""},"Посох Дмитро":{"location":"Синяк","amount":null,"note":""},"Єриго Павло":{"location":"Синяк","amount":null,"note":""},"Приймак Владислав":{"location":"Синяк","amount":1400.0,"note":""},"Лисенко Василь":{"location":"Синяк","amount":null,"note":""},"Травянко Тимур":{"location":"Синяк","amount":1400.0,"note":""},"Зінченко Денис":{"location":"Синяк","amount":1200.0,"note":"недоплата"},"Хижняк Іван":{"location":"Синяк","amount":1260.0,"note":""},"Колісніченко Мирослав":{"location":"Синяк","amount":1260.0,"note":""},"Терещенко Іван":{"location":"Синяк","amount":null,"note":""},"Павлов Лев":{"location":"Синяк","amount":null,"note":""},"Щуренко Евгеній":{"location":"Синяк","amount":null,"note":""},"Теребій Давид":{"location":"Синяк","amount":null,"note":""},"Чамата Назар":{"location":"Синяк","amount":null,"note":""},"Федоренко Макар":{"location":"Синяк","amount":1400.0,"note":""},"Лавицький Ростислав":{"location":"Синяк","amount":1400.0,"note":""},"Лелека Нікіта":{"location":"Бабинці","amount":null,"note":""},"Мармелюк Макар":{"location":"Синяк","amount":1400.0,"note":""},"Мармелюк Iлля":{"location":"Синяк","amount":1400.0,"note":""},"Архипенко Дмитро":{"location":"Синяк","amount":630.0,"note":"Хворів з 19.02 по 9.03 тому половина вартості"},"Коваленко Владислав":{"location":"Синяк","amount":1260.0,"note":""},"Фалько Динил":{"location":"Синяк","amount":null,"note":""},"Стецюк Матвій":{"location":"Синяк","amount":null,"note":""},"Стецюк Назар":{"location":"Синяк","amount":null,"note":""},"Зінченко Валерія":{"location":"Синяк","amount":null,"note":""},"Безсмертний Олександр":{"location":"Бабинці","amount":1260.0,"note":""},"Олексюк Віктор":{"location":"Бабинці","amount":null,"note":""},"Ткач Данііл":{"location":"Бабинці","amount":null,"note":""},"Щербаков Матвій":{"location":"Бабинці","amount":null,"note":""},"Павлюченко Кирилл":{"location":"Бабинці","amount":null,"note":""},"Ромашкін Богдан":{"location":"Бабинці","amount":1400.0,"note":""},"Логвиненко Денис":{"location":"Бабинці","amount":null,"note":""},"Моргун Арсен":{"location":"Бабинці","amount":1400.0,"note":"Моргун Світлана Володиирівна"},"Гудков Андрій":{"location":"Бабинці","amount":null,"note":""},"Ренцевич Роман":{"location":"Бабинці","amount":null,"note":""},"Матейко Соломія":{"location":"Бабинці","amount":1260.0,"note":""},"Кизим Дмитро":{"location":"Бабинці","amount":1400.0,"note":""},"Іваненко Дмитро":{"location":"Бабинці","amount":1400.0,"note":""},"Самусенко Максим":{"location":"Бабинці","amount":1400.0,"note":"Припиняє відвудування, кошти переходять на квітень Кизиму Дмитру"},"Прибильський Іван":{"location":"Бабинці","amount":null,"note":""},"Шкурка Олександр":{"location":"Бабинці","amount":1250.0,"note":""},"Болілий Вадим":{"location":"Бабинці","amount":null,"note":""},"Дрондін Артем":{"location":"Бабинці","amount":null,"note":""},"Щелкунов Арсен":{"location":"Бабинці","amount":null,"note":""},"Примаченко Тимофіі":{"location":"Бабинці","amount":1260.0,"note":""},"Кубицький Антон":{"location":"Бабинці","amount":1400.0,"note":""},"Добривечор Артем":{"location":"Бабинці","amount":1400.0,"note":""},"Мазепа Нікіта":{"location":"Бабинці","amount":1400.0,"note":"10.03 має принести готівку"},"Порубов Олексій":{"location":"Бабинці","amount":null,"note":""},"Мадяр Даніель":{"location":"Бабинці","amount":1400.0,"note":""},"Яковенко Гліб":{"location":"Бабинці","amount":1400.0,"note":""},"Конфорович":{"location":"Бабинці","amount":null,"note":""},"Стариш":{"location":"Бабинці","amount":null,"note":""},"Клєвцов Роман":{"location":"Бабинці","amount":1400.0,"note":"з 03. готівка"},"Макарчук Артем":{"location":"Бабинці","amount":null,"note":""},"Булацький":{"location":"Бабинці","amount":null,"note":""},"Моісеєнко Артем":{"location":"Бабинці","amount":1120.0,"note":"Має доплатити"},"Сотніков Олександр":{"location":"Бабинці","amount":1400.0,"note":""},"Реган Данил":{"location":"Бабинці","amount":1400.0,"note":""},"Щербаков Тімур":{"location":"Бабинці","amount":null,"note":""},"Кравчук Тимофій":{"location":"Бабинці","amount":1400.0,"note":""},"Вислоцький Артем":{"location":"Бабинці","amount":1400.0,"note":""},"Романенко Роман":{"location":"Нове Залісся","amount":1000.0,"note":""},"Кулакевич Захар":{"location":"Нове Залісся","amount":null,"note":""},"Лічман Дмитро":{"location":"Нове Залісся","amount":null,"note":""},"Плескань Даниїл":{"location":"Нове Залісся","amount":800.0,"note":""},"Рева Олександр":{"location":"Нове Залісся","amount":null,"note":""},"Гогсадзе Давид":{"location":"Нове Залісся","amount":1200.0,"note":""},"Росовський Нікіта":{"location":"Нове Залісся","amount":null,"note":""},"Маслюківський Арсеній":{"location":"Нове Залісся","amount":1200.0,"note":"200 грн переноситься на квітень"},"Петрусенко Дмитро":{"location":"Нове Залісся","amount":1000.0,"note":""},"Хрущ Ярослав":{"location":"Нове Залісся","amount":900.0,"note":""},"Гончаров Юрій":{"location":"Нове Залісся","amount":1000.0,"note":"знову 1000 заплатили, треба на 200 грн менше в квітні"},"Тарай Тимофій":{"location":"Нове Залісся","amount":1000.0,"note":""}};
+function normalizeName(s){return String(s||'').replace(/\s+/g,' ').trim();}
+function defaultPlayers(){
+  return RAW.map((r,i)=>({
+    id:'p'+(i+1),name:r[0],location:r[1],group:i%2===0?'Молодша':'Старша',benefitMode:'none',customPrice:null,notes:'',
+    number:i+1,attendance:{},payments:{},createdAt:Date.now()
+  }));
+}
+function defaultMarkers(f){
+  const sets={
+    '4-3-3':[{id:'m1',x:50,y:90,n:'1',c:'gold',label:''},{id:'m2',x:18,y:72,n:'2',c:'red',label:''},{id:'m3',x:38,y:74,n:'3',c:'red',label:''},{id:'m4',x:62,y:74,n:'4',c:'red',label:''},{id:'m5',x:82,y:72,n:'5',c:'red',label:''},{id:'m6',x:28,y:52,n:'6',c:'red',label:''},{id:'m7',x:50,y:48,n:'8',c:'red',label:''},{id:'m8',x:72,y:52,n:'10',c:'red',label:''},{id:'m9',x:20,y:24,n:'11',c:'red',label:''},{id:'m10',x:50,y:18,n:'9',c:'red',label:''},{id:'m11',x:80,y:24,n:'7',c:'red',label:''}],
+    '4-4-2':[{id:'m1',x:50,y:90,n:'1',c:'gold',label:''},{id:'m2',x:18,y:72,n:'2',c:'red',label:''},{id:'m3',x:38,y:74,n:'3',c:'red',label:''},{id:'m4',x:62,y:74,n:'4',c:'red',label:''},{id:'m5',x:82,y:72,n:'5',c:'red',label:''},{id:'m6',x:18,y:50,n:'11',c:'red',label:''},{id:'m7',x:40,y:52,n:'6',c:'red',label:''},{id:'m8',x:60,y:52,n:'8',c:'red',label:''},{id:'m9',x:82,y:50,n:'7',c:'red',label:''},{id:'m10',x:38,y:22,n:'9',c:'red',label:''},{id:'m11',x:62,y:22,n:'10',c:'red',label:''}]
+  };
+  return JSON.parse(JSON.stringify(sets[f]||sets['4-3-3']));
+}
+function seed(){
+  const d=today();
+  return {
+    tab:'dashboard',
+    q:'', locationFilter:'Усі',
+    month:d.getMonth(), year:d.getFullYear(),
+    attendanceLocation:'Усі', paymentsLocation:'Усі', analyticsLocation:'Усі', debtorsLocation:'Усі',
+    calendarLocation:'Усі', matchLocation:'Усі', seasonLocation:'Усі',
+    players:defaultPlayers(), payroll:{}, rentals:{}, marchImportApplied:false,
+    formation:'4-3-3', markers:defaultMarkers('4-3-3'),
+    matches:[], selectedMatchId:null,
+    tournaments:[{id:'trn1',name:'Весняний турнір',played:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0,points:0}]
+  };
+}
+const app={state:seed()};
+app.load=()=>{
+  try{const raw=localStorage.getItem(STORAGE_KEY); if(raw) app.state={...seed(),...JSON.parse(raw)};}catch(e){}
+  if(!app.state.players?.length) app.state.players=defaultPlayers();
+  if(!app.state.markers?.length) app.state.markers=defaultMarkers(app.state.formation||'4-3-3');
+  if(!app.state.tournaments?.length) app.state.tournaments=[{id:'trn1',name:'Весняний турнір',played:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0,points:0}];
+  app.ensureRentals();
+  if(!app.state.marchImportApplied) app.applyMarchImport();
+  app.render();
+};
+app.save=()=>localStorage.setItem(STORAGE_KEY,JSON.stringify(app.state));
+
+app.ensureRentals=()=>{
+  LOCATIONS.forEach(l=>{
+    if(!app.state.rentals[l.name]) app.state.rentals[l.name]={paid:false,amount:1500,paidDate:'',note:''};
+  });
+};
+app.applyMarchImport=()=>{
+  const key=MARCH_IMPORT_MONTH;
+  app.state.players.forEach(p=>{
+    const imp=MARCH_IMPORT[normalizeName(p.name)];
+    if(!imp || imp.location!==p.location) return;
+    p.payments ||= {};
+    const base=app.basePrice(p);
+    let benefit='none';
+    let custom=null;
+    const amount=imp.amount;
+    if(amount!=null){
+      if(Math.round(base*0.9)===Math.round(amount)) benefit='10';
+      else if(Math.round(base*0.85)===Math.round(amount)) benefit='15';
+      else if(Math.round(base)!==Math.round(amount)) custom=Number(amount);
+      p.benefitMode=benefit;
+      if(custom!=null) p.customPrice=custom;
+      p.payments[key]={
+        status: amount >= Math.round((custom ?? base)*(benefit==='10'?0.9:benefit==='15'?0.85:1)) ? 'Оплачено' : 'Частково',
+        benefitMode: benefit,
+        customPrice: custom,
+        amount: Number(amount),
+        paidDate:'',
+        paidTime:''
+      };
+      if(imp.note) p.notes = p.notes ? (p.notes + ' | Березень: ' + imp.note) : ('Березень: ' + imp.note);
+    }else{
+      p.payments[key] ||= {status:'Не оплачено',benefitMode:p.benefitMode||'none',customPrice:p.customPrice||null,amount:app.calcAmount(p),paidDate:'',paidTime:''};
+    }
+  });
+  app.state.marchImportApplied=true;
+};
+app.setTab=t=>{app.state.tab=t; app.render(); window.scrollTo({top:0,behavior:'smooth'});};
+app.basePrice=p=>(LOCATIONS.find(l=>l.name===p.location)?.price)||1400;
+app.calcAmount=(p,modeOverride)=>{
+  const base=Number(p.customPrice||app.basePrice(p));
+  const mode=modeOverride ?? p.benefitMode ?? 'none';
+  if(mode==='10') return Math.round(base*0.9);
+  if(mode==='15') return Math.round(base*0.85);
+  return base;
+};
+app.payKey=()=>ym(app.state.year,app.state.month);
+app.getPayment=(p)=>{
+  const key=app.payKey();
+  if(!p.payments[key]) p.payments[key]={status:'Не оплачено',benefitMode:p.benefitMode||'none',customPrice:p.customPrice||null,amount:app.calcAmount(p),paidDate:'',paidTime:''};
+  const rec=p.payments[key];
+  if(rec.customPrice==null && p.customPrice!=null) rec.customPrice=p.customPrice;
+  if(!rec.benefitMode) rec.benefitMode=p.benefitMode||'none';
+  rec.amount=app.calcAmount({...p,customPrice:rec.customPrice},rec.benefitMode);
+  return rec;
+};
+app.attKey=()=>app.payKey();
+app.getAttendanceStatus=(p,loc)=>{
+  const key=app.attKey();
+  const map=p.attendance[key]||{};
+  return map[loc==='Усі'?'global':loc] || (loc==='Усі' ? '—' : map.global||'—');
+};
+app.setPaymentStatus=(id,status)=>{
+  const p=app.state.players.find(x=>x.id===id); if(!p) return;
+  const rec=app.getPayment(p); rec.status=status;
+  if(status==='Оплачено'||status==='Частково'){const d=new Date(); rec.paidDate=ymd(d); rec.paidTime=`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
+  else {rec.paidDate=''; rec.paidTime='';}
+  app.save(); app.render();
+};
+app.setBenefit=(id,mode)=>{
+  const p=app.state.players.find(x=>x.id===id); if(!p) return;
+  p.benefitMode=mode; const rec=app.getPayment(p); rec.benefitMode=mode; rec.amount=app.calcAmount({...p,customPrice:rec.customPrice},mode);
+  app.save(); app.renderPayments(); app.renderAnalytics(); app.renderDebtors(); app.renderHero();
+};
+app.setCustomPrice=(id,val)=>{
+  const p=app.state.players.find(x=>x.id===id); if(!p) return;
+  const num=Number(val)||null; p.customPrice=num; const rec=app.getPayment(p); rec.customPrice=num; rec.amount=app.calcAmount({...p,customPrice:num},rec.benefitMode);
+  app.save(); app.renderPayments(); app.renderAnalytics(); app.renderDebtors(); app.renderHero();
+};
+app.markAttendance=(id,status)=>{
+  const p=app.state.players.find(x=>x.id===id); if(!p) return;
+  const key=app.attKey(); p.attendance[key] ||= {};
+  p.attendance[key][app.state.attendanceLocation==='Усі' ? 'global' : app.state.attendanceLocation]=status;
+  app.save(); app.renderAttendance(); app.renderAnalytics(); app.renderSeasonStats();
+};
+app.paymentStats=()=>{
+  const key=app.payKey(); let paid=0,partial=0,unpaid=0,income=0;
+  app.state.players.forEach(p=>{
+    const r=p.payments[key]||{status:'Не оплачено',amount:app.calcAmount(p)};
+    if(r.status==='Оплачено'){paid++; income+=r.amount;}
+    else if(r.status==='Частково'){partial++; income+=Math.round(r.amount/2);}
+    else unpaid++;
+  });
+  return {paid,partial,unpaid,income};
+};
+app.renderNav=()=>{qs('#bottomNav').innerHTML=TABS.map(([k,l])=>`<button class="nav-btn ${app.state.tab===k?'active':''}" data-tab="${k}">${l}</button>`).join('');};
+app.renderHero=()=>{
+  const show=app.state.tab==='dashboard'; const hero=qs('#hero'); hero.classList.toggle('hidden',!show); if(!show) return;
+  const pay=app.paymentStats();
+  hero.innerHTML=`<div class="title">Головний екран</div><div class="small">${MONTHS[app.state.month]} ${app.state.year}</div>
+    <div class="hero-grid">
+      <div class="stat"><div class="v">${app.state.players.length}</div><div class="l">Гравці</div></div>
+      <div class="stat"><div class="v">${pay.paid}</div><div class="l">Оплачено</div></div>
+      <div class="stat"><div class="v">${pay.unpaid}</div><div class="l">Боржники</div></div>
+      <div class="stat"><div class="v">${money(pay.income)}</div><div class="l">Дохід місяця</div></div>
+    </div>`;
+};
+app.showSection=()=>{qsa('.section').forEach(s=>s.classList.remove('active')); qs('#section-'+app.state.tab).classList.add('active');};
+
+app.renderDashboard=()=>{
+  const pay=app.paymentStats();
+  const matchCount=app.state.matches.length;
+  const trnCount=app.state.tournaments.length;
+  qs('#section-dashboard').innerHTML=`
+    <div class="grid four">
+      <div class="panel"><div class="title">Оплачено</div><div style="font-size:28px;font-weight:900">${pay.paid}</div></div>
+      <div class="panel"><div class="title">Частково</div><div style="font-size:28px;font-weight:900">${pay.partial}</div></div>
+      <div class="panel"><div class="title">Матчі</div><div style="font-size:28px;font-weight:900">${matchCount}</div></div>
+      <div class="panel"><div class="title">Турніри</div><div style="font-size:28px;font-weight:900">${trnCount}</div></div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="title">Локації</div>
+      <div class="list" style="margin-top:10px">
+        ${LOCATIONS.map(l=>`<div class="item"><div class="row between"><strong>${l.name}</strong><span class="chip">${app.state.players.filter(p=>p.location===l.name).length} дітей</span></div><div class="small" style="margin-top:6px">${l.trainer} • ${l.days.map(d=>WEEKDAYS[d]).join(' / ')} • ${money(l.price)}</div></div>`).join('')}
+      </div>
+    </div>`;
+};
+
+app.renderPlayers=()=>{
+  const q=app.state.q.toLowerCase().trim();
+  const list=app.state.players.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(app.state.locationFilter==='Усі'||p.location===app.state.locationFilter));
+  qs('#section-players').innerHTML=`
+    <div class="panel">
+      <div class="filters">
+        <input id="qInput" placeholder="Пошук" value="${esc(app.state.q)}">
+        <select id="locFilter"><option>Усі</option>${LOCATIONS.map(l=>`<option ${app.state.locationFilter===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="list" style="margin-top:12px">
+      ${list.map(p=>{const rec=app.getPayment(p); return `<div class="card"><div class="row between"><div><strong>${esc(p.name)}</strong><div class="small">${p.location} • ${p.group}</div></div><span class="chip ${rec.status==='Оплачено'?'ok':rec.status==='Частково'?'warn':'bad'}">${rec.status}</span></div><div class="row" style="margin-top:10px"><span class="chip">${rec.benefitMode==='10'?'Пільга 10%':rec.benefitMode==='15'?'Пільга 15%':'Стандарт'}</span><span class="chip">${money(rec.amount)}</span><button class="btn" data-open-player="${p.id}">Картка</button></div></div>`;}).join('') || '<div class="empty">Нічого не знайдено</div>'}
+    </div>`;
+  qs('#qInput').oninput=e=>{app.state.q=e.target.value; app.renderPlayers();};
+  qs('#locFilter').onchange=e=>{app.state.locationFilter=e.target.value; app.renderPlayers();};
+};
+app.openPlayer=id=>{
+  const p=app.state.players.find(x=>x.id===id); if(!p) return; const rec=app.getPayment(p);
+  qs('#modalTitle').textContent=p.name;
+  qs('#modalBody').innerHTML=`
+    <div class="list">
+      <div class="item"><div class="small">Локація</div><strong>${p.location}</strong></div>
+      <div class="item"><div class="small">Оплата (${MONTHS[app.state.month]})</div><strong>${rec.status} • ${money(rec.amount)}</strong></div>
+      <div class="item"><div class="small">Нотатки</div><textarea id="playerNotes">${esc(p.notes)}</textarea><div class="row" style="margin-top:10px"><button class="btn-primary" data-save-notes="${p.id}">Зберегти</button></div></div>
+    </div>`;
+  qs('#modal').classList.add('show');
+};
+
+app.renderAttendance=()=>{
+  const loc=app.state.attendanceLocation;
+  const list=app.state.players.filter(p=>loc==='Усі'||p.location===loc);
+  qs('#section-attendance').innerHTML=`
+    <div class="panel">
+      <div class="filters three">
+        <select id="attMonth">${MONTHS.map((m,i)=>`<option value="${i}" ${i===app.state.month?'selected':''}>${m}</option>`).join('')}</select>
+        <select id="attYear">${[app.state.year,app.state.year+1].map(y=>`<option ${y===app.state.year?'selected':''}>${y}</option>`).join('')}</select>
+        <select id="attLoc"><option>Усі</option>${LOCATIONS.map(l=>`<option ${loc===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+      </div>
+      <div class="small" style="margin-top:8px">Відвідуваність за місяць та локацію</div>
+      <div class="row" style="margin-top:10px"><button class="btn-blue" id="exportAttendanceBtn">Завантажити таблицю відвідування</button></div>
+    </div>
+    <div class="list" style="margin-top:12px">
+      ${list.map(p=>{const s=app.getAttendanceStatus(p,loc); return `<div class="card"><div class="row between"><div><strong>${esc(p.name)}</strong><div class="small">${p.location}</div></div><span class="chip ${s==='Був'?'ok':s==='Запізнився'?'warn':s==='Не був'?'bad':''}">${s}</span></div><div class="row" style="margin-top:10px"><button class="btn-green" data-att="${p.id}|Був">Був</button><button class="btn-orange" data-att="${p.id}|Запізнився">Запізнився</button><button class="btn-red" data-att="${p.id}|Не був">Не був</button></div></div>`;}).join('')}
+    </div>`;
+  qs('#attMonth').onchange=e=>{app.state.month=+e.target.value; app.render();};
+  qs('#attYear').onchange=e=>{app.state.year=+e.target.value; app.render();};
+  qs('#attLoc').onchange=e=>{app.state.attendanceLocation=e.target.value; app.renderAttendance();};
+  qs('#exportAttendanceBtn').onclick=app.exportAttendanceMonth;
+};
+
+app.renderPayments=()=>{
+  const loc=app.state.paymentsLocation;
+  const list=app.state.players.filter(p=>loc==='Усі'||p.location===loc);
+  qs('#section-payments').innerHTML=`
+    <div class="panel">
+      <div class="filters three">
+        <select id="payMonth">${MONTHS.map((m,i)=>`<option value="${i}" ${i===app.state.month?'selected':''}>${m}</option>`).join('')}</select>
+        <select id="payYear">${[app.state.year,app.state.year+1].map(y=>`<option ${y===app.state.year?'selected':''}>${y}</option>`).join('')}</select>
+        <select id="payLoc"><option>Усі</option>${LOCATIONS.map(l=>`<option ${loc===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+      </div>
+      <div class="small" style="margin-top:8px">Оплати з датою, часом, пільгою і своєю ціною</div>
+    </div>
+    <div class="list" style="margin-top:12px">
+      ${list.map(p=>{const r=app.getPayment(p); return `<div class="card"><div class="row between"><div><strong>${esc(p.name)}</strong><div class="small">${p.location} • ${p.group}</div></div><span class="chip ${r.status==='Оплачено'?'ok':r.status==='Частково'?'warn':'bad'}">${r.status}</span></div><div class="row" style="margin-top:10px"><span class="chip">${r.benefitMode==='10'?'Пільга 10%':r.benefitMode==='15'?'Пільга 15%':'Без пільги'}</span><span class="chip">${money(r.amount)}</span>${r.paidDate?`<span class="chip ok">${r.paidDate} ${r.paidTime||''}</span>`:''}</div><div class="row" style="margin-top:10px"><select data-benefit-select="${p.id}" style="max-width:150px"><option value="none" ${r.benefitMode==='none'?'selected':''}>Без пільги</option><option value="10" ${r.benefitMode==='10'?'selected':''}>Пільга 10%</option><option value="15" ${r.benefitMode==='15'?'selected':''}>Пільга 15%</option></select><input type="number" data-custom-price="${p.id}" value="${r.customPrice||''}" placeholder="Своя ціна" style="max-width:130px"><button class="btn-primary" data-pay="${p.id}|Оплачено">Оплачено</button><button class="btn-orange" data-pay="${p.id}|Частково">Частково</button><button class="btn-red" data-pay="${p.id}|Не оплачено">Не оплачено</button></div></div>`;}).join('')}
+    </div>`;
+  qs('#payMonth').onchange=e=>{app.state.month=+e.target.value; app.render();};
+  qs('#payYear').onchange=e=>{app.state.year=+e.target.value; app.render();};
+  qs('#payLoc').onchange=e=>{app.state.paymentsLocation=e.target.value; app.renderPayments();};
+};
+
+app.renderAnalytics=()=>{
+  const loc=app.state.analyticsLocation;
+  const key=app.payKey();
+  const filtered=app.state.players.filter(p=>loc==='Усі'||p.location===loc);
+  const rows=LOCATIONS.filter(l=>loc==='Усі'||l.name===loc).map(l=>{
+    const ps=app.state.players.filter(p=>p.location===l.name);
+    let paid=0,partial=0,debt=0,income=0,present=0,late=0,absent=0;
+    ps.forEach(p=>{
+      const r=app.getPayment(p);
+      if(r.status==='Оплачено'){paid++; income+=r.amount;} else if(r.status==='Частково'){partial++; income+=Math.round(r.amount/2);} else debt++;
+      const a=app.getAttendanceStatus(p,l.name);
+      if(a==='Був') present++; else if(a==='Запізнився') late++; else if(a==='Не був') absent++;
+    });
+    return {name:l.name,count:ps.length,paid,partial,debt,income,present,late,absent};
+  });
+  qs('#section-analytics').innerHTML=`
+    <div class="panel">
+      <div class="filters three">
+        <select id="anMonth">${MONTHS.map((m,i)=>`<option value="${i}" ${i===app.state.month?'selected':''}>${m}</option>`).join('')}</select>
+        <select id="anYear">${[app.state.year,app.state.year+1].map(y=>`<option ${y===app.state.year?'selected':''}>${y}</option>`).join('')}</select>
+        <select id="anLoc"><option>Усі</option>${LOCATIONS.map(l=>`<option ${loc===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="title">Підсумок по локаціях</div>
+      <div class="table-wrap" style="margin-top:10px">
+        <table><thead><tr><th>Локація</th><th>Дітей</th><th>Оплачено</th><th>Частково</th><th>Борг</th><th>Дохід</th><th>Були</th><th>Запізн.</th><th>Не були</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.name}</td><td>${r.count}</td><td>${r.paid}</td><td>${r.partial}</td><td>${r.debt}</td><td>${money(r.income)}</td><td>${r.present}</td><td>${r.late}</td><td>${r.absent}</td></tr>`).join('')}</tbody></table>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="title">Журнал оплат</div>
+      <div class="table-wrap" style="margin-top:10px">
+        <table><thead><tr><th>Ім’я</th><th>Локація</th><th>Статус</th><th>Сума</th><th>Дата</th><th>Час</th></tr></thead><tbody>${filtered.filter(p=>app.getPayment(p).paidDate).sort((a,b)=>(app.getPayment(b).paidDate+' '+app.getPayment(b).paidTime).localeCompare(app.getPayment(a).paidDate+' '+app.getPayment(a).paidTime)).map(p=>{const r=app.getPayment(p); return `<tr><td>${esc(p.name)}</td><td>${p.location}</td><td>${r.status}</td><td>${money(r.amount)}</td><td>${r.paidDate||'—'}</td><td>${r.paidTime||'—'}</td></tr>`;}).join('') || '<tr><td colspan="6">Оплат поки немає</td></tr>'}</tbody></table>
+      </div>
+    </div>`;
+  qs('#anMonth').onchange=e=>{app.state.month=+e.target.value; app.render();};
+  qs('#anYear').onchange=e=>{app.state.year=+e.target.value; app.render();};
+  qs('#anLoc').onchange=e=>{app.state.analyticsLocation=e.target.value; app.renderAnalytics();};
+};
+
+app.renderDebtors=()=>{
+  const loc=app.state.debtorsLocation;
+  const list=app.state.players.filter(p=>(loc==='Усі'||p.location===loc)&&app.getPayment(p).status!=='Оплачено').sort((a,b)=>a.location.localeCompare(b.location)||a.name.localeCompare(b.name));
+  qs('#section-debtors').innerHTML=`
+    <div class="panel">
+      <div class="filters three">
+        <select id="dbMonth">${MONTHS.map((m,i)=>`<option value="${i}" ${i===app.state.month?'selected':''}>${m}</option>`).join('')}</select>
+        <select id="dbYear">${[app.state.year,app.state.year+1].map(y=>`<option ${y===app.state.year?'selected':''}>${y}</option>`).join('')}</select>
+        <select id="dbLoc"><option>Усі</option>${LOCATIONS.map(l=>`<option ${loc===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+      </div>
+      <div class="small" style="margin-top:8px">Окремий екран боржників по локації, місяцю та року</div>
+      <div class="row" style="margin-top:10px"><button class="btn-blue" id="exportDebtorsBtn">Завантажити таблицю боржників</button></div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="table-wrap">
+        <table><thead><tr><th>Ім’я</th><th>Локація</th><th>Статус</th><th>Сума</th><th>Пільга</th><th>Дата останньої дії</th></tr></thead><tbody>${list.map(p=>{const r=app.getPayment(p); return `<tr><td>${esc(p.name)}</td><td>${p.location}</td><td>${r.status}</td><td>${money(r.amount)}</td><td>${r.benefitMode==='10'?'10%':r.benefitMode==='15'?'15%':'—'}</td><td>${r.paidDate||'—'} ${r.paidTime||''}</td></tr>`;}).join('') || '<tr><td colspan="6">Боржників немає</td></tr>'}</tbody></table>
+      </div>
+    </div>`;
+  qs('#dbMonth').onchange=e=>{app.state.month=+e.target.value; app.render();};
+  qs('#dbYear').onchange=e=>{app.state.year=+e.target.value; app.render();};
+  qs('#dbLoc').onchange=e=>{app.state.debtorsLocation=e.target.value; app.renderDebtors();};
+  qs('#exportDebtorsBtn').onclick=app.exportDebtorsMonth;
+};
+
+app.getCurrentMatch=()=>app.state.matches.find(m=>m.id===app.state.selectedMatchId)||null;
+app.createMatch=()=>{
+  const id='match_'+Date.now();
+  const d=today();
+  app.state.matches.unshift({id,title:'Новий матч',opponent:'',location:'',date:ymd(d),time:'',coach:'',formation:'4-3-3',notes:'',scoreUs:0,scoreThem:0,mvp:'',tournamentId:app.state.tournaments[0]?.id||'',startingXI:[],activity:{}});
+  app.state.selectedMatchId=id; app.save(); app.renderMatchCenter();
+};
+app.renderMatchCenter=()=>{
+  const matches=app.state.matches; let current=app.getCurrentMatch(); if(!current && matches.length){app.state.selectedMatchId=matches[0].id; current=matches[0];}
+  const eligible=app.state.players.filter(p=>app.state.matchLocation==='Усі'||p.location===app.state.matchLocation);
+  qs('#section-matchcenter').innerHTML=`
+    <div class="panel">
+      <div class="row between">
+        <div><div class="title">Матч-центр</div><div class="small">Суперник, місце, час, склад, рахунок, MVP, активність</div></div>
+        <button class="btn-primary" data-create-match>+ Матч</button>
+      </div>
+    </div>
+    <div class="grid two" style="margin-top:12px">
+      <div class="panel">
+        <div class="row between"><div class="title">Матчі</div><select id="matchLocFilter" style="max-width:160px"><option>Усі</option>${LOCATIONS.map(l=>`<option ${app.state.matchLocation===l.name?'selected':''}>${l.name}</option>`).join('')}</select></div>
+        <div class="list" style="margin-top:10px">${matches.map(m=>`<div class="item" style="${app.state.selectedMatchId===m.id?'border:2px solid #d4a43a':''}"><div class="row between"><div><strong>${esc(m.opponent||'Без суперника')}</strong><div class="small">${m.date||'—'} ${m.time||''} • ${m.scoreUs}:${m.scoreThem}</div></div><button class="btn" data-open-match="${m.id}">Відкрити</button></div></div>`).join('') || '<div class="empty">Матчів ще немає</div>'}</div>
+      </div>
+      <div class="panel">
+        ${current ? `
+          <div class="title">Налаштування матчу</div>
+          <div class="filters two" style="margin-top:10px">
+            <input id="mcOpponent" placeholder="Суперник" value="${esc(current.opponent)}">
+            <input id="mcPlace" placeholder="Місце" value="${esc(current.location)}">
+            <input id="mcDate" type="date" value="${current.date||''}">
+            <input id="mcTime" type="time" value="${current.time||''}">
+            <input id="mcCoach" placeholder="Тренер" value="${esc(current.coach)}">
+            <select id="mcFormation"><option ${current.formation==='4-3-3'?'selected':''}>4-3-3</option><option ${current.formation==='4-4-2'?'selected':''}>4-4-2</option></select>
+            <input id="mcScoreUs" type="number" min="0" value="${current.scoreUs||0}" placeholder="Наші голи">
+            <input id="mcScoreThem" type="number" min="0" value="${current.scoreThem||0}" placeholder="Голи суперника">
+            <select id="mcTournament"><option value="">Без турніру</option>${app.state.tournaments.map(t=>`<option value="${t.id}" ${current.tournamentId===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</select>
+            <input id="mcMVP" placeholder="MVP матчу" value="${esc(current.mvp||'')}">
+          </div>
+          <textarea id="mcNotes" style="margin-top:10px" placeholder="Нотатки">${esc(current.notes||'')}</textarea>
+          <div class="row" style="margin-top:10px"><button class="btn-green" data-save-match="${current.id}">Зберегти матч</button><button class="btn-red" data-delete-match="${current.id}">Видалити</button></div>
+        ` : '<div class="empty">Створи матч</div>'}
+      </div>
+    </div>
+    ${current ? `
+      <div class="panel" style="margin-top:12px">
+        <div class="title">Стартовий склад</div>
+        <div class="list" style="margin-top:10px">${eligible.map(p=>{const checked=current.startingXI.includes(p.id); return `<div class="item"><div class="row between"><div><strong>${esc(p.name)}</strong><div class="small">${p.location}</div></div><button class="btn ${checked?'btn-green':''}" data-toggle-xi="${current.id}|${p.id}">${checked?'У старті':'Додати'}</button></div></div>`;}).join('')}</div>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <div class="title">Активність гравців</div>
+        <div class="table-wrap" style="margin-top:10px">
+          <table><thead><tr><th>Гравець</th><th>Старт</th><th>Голи</th><th>Асисти</th><th>Хвилини</th><th>Статус</th></tr></thead><tbody>${eligible.map(p=>{current.activity[p.id] ||= {goals:0,assists:0,minutes:0,status:'Не грав'}; const a=current.activity[p.id]; return `<tr><td>${esc(p.name)}<div class="small">${p.location}</div></td><td>${current.startingXI.includes(p.id)?'Так':'Ні'}</td><td><input type="number" min="0" value="${a.goals}" data-match-stat="${current.id}|${p.id}|goals" style="min-width:70px"></td><td><input type="number" min="0" value="${a.assists}" data-match-stat="${current.id}|${p.id}|assists" style="min-width:70px"></td><td><input type="number" min="0" value="${a.minutes}" data-match-stat="${current.id}|${p.id}|minutes" style="min-width:80px"></td><td><select data-match-status="${current.id}|${p.id}"><option ${a.status==='Не грав'?'selected':''}>Не грав</option><option ${a.status==='Грав'?'selected':''}>Грав</option><option ${a.status==='Старт'?'selected':''}>Старт</option><option ${a.status==='Заміна'?'selected':''}>Заміна</option></select></td></tr>`;}).join('')}</tbody></table>
+        </div>
+      </div>` : ''}`;
+  const f=qs('#matchLocFilter'); if(f) f.onchange=e=>{app.state.matchLocation=e.target.value; app.renderMatchCenter();};
+};
+
+app.renderSeasonStats=()=>{
+  const loc=app.state.seasonLocation;
+  const players=app.state.players.filter(p=>loc==='Усі'||p.location===loc).map(p=>{
+    let paidFull=0, income=0, present=0, late=0, absent=0, goals=0, assists=0, minutes=0, matches=0;
+    Object.values(p.payments||{}).forEach(r=>{if(r.status==='Оплачено'){paidFull++; income+=Number(r.amount||0);} else if(r.status==='Частково'){income+=Math.round(Number(r.amount||0)/2);}});
+    Object.values(p.attendance||{}).forEach(map=>Object.values(map||{}).forEach(v=>{if(v==='Був')present++; else if(v==='Запізнився')late++; else if(v==='Не був')absent++;}));
+    app.state.matches.forEach(m=>{const a=m.activity?.[p.id]; if(a){goals+=Number(a.goals||0); assists+=Number(a.assists||0); minutes+=Number(a.minutes||0); if(a.status!=='Не грав') matches++;}});
+    return {name:p.name,location:p.location,paidFull,income,present,late,absent,goals,assists,minutes,matches};
+  }).sort((a,b)=>b.goals-a.goals||b.assists-a.assists||b.matches-a.matches);
+  qs('#section-seasonstats').innerHTML=`
+    <div class="panel">
+      <div class="filters three">
+        <select id="ssLoc"><option>Усі</option>${LOCATIONS.map(l=>`<option ${loc===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+        <div class="item" style="padding:10px 12px"><strong>Сезон:</strong> ${app.state.year}</div>
+        <div class="item" style="padding:10px 12px"><strong>Гравців:</strong> ${players.length}</div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="title">Сезонна статистика гравців</div>
+      <div class="table-wrap" style="margin-top:10px">
+        <table><thead><tr><th>Гравець</th><th>Локація</th><th>Місяців оплачено</th><th>Дохід</th><th>Був</th><th>Запізн.</th><th>Не був</th><th>Матчів</th><th>Голи</th><th>Асисти</th><th>Хвилини</th></tr></thead><tbody>${players.map(r=>`<tr><td>${esc(r.name)}</td><td>${r.location}</td><td>${r.paidFull}</td><td>${money(r.income)}</td><td>${r.present}</td><td>${r.late}</td><td>${r.absent}</td><td>${r.matches}</td><td>${r.goals}</td><td>${r.assists}</td><td>${r.minutes}</td></tr>`).join('')}</tbody></table>
+      </div>
+    </div>`;
+  qs('#ssLoc').onchange=e=>{app.state.seasonLocation=e.target.value; app.renderSeasonStats();};
+};
+
+app.recalcTournament=t=>{
+  const matches=app.state.matches.filter(m=>m.tournamentId===t.id);
+  let wins=0,draws=0,losses=0,gf=0,ga=0,played=matches.length;
+  matches.forEach(m=>{
+    const us=Number(m.scoreUs||0), them=Number(m.scoreThem||0); gf+=us; ga+=them;
+    if(us>them) wins++; else if(us===them) draws++; else losses++;
+  });
+  t.played=played; t.wins=wins; t.draws=draws; t.losses=losses; t.goalsFor=gf; t.goalsAgainst=ga; t.points=wins*3+draws;
+};
+app.renderTournaments=()=>{
+  app.state.tournaments.forEach(app.recalcTournament);
+  qs('#section-tournaments').innerHTML=`
+    <div class="panel">
+      <div class="row between">
+        <div><div class="title">Турніри / таблиця</div><div class="small">Турніри автоматично рахуються з матчів</div></div>
+        <button class="btn-primary" data-add-tournament>+ Турнір</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="table-wrap">
+        <table><thead><tr><th>Турнір</th><th>І</th><th>В</th><th>Н</th><th>П</th><th>ГЗ</th><th>ГП</th><th>Різн.</th><th>О</th><th>Дії</th></tr></thead><tbody>${app.state.tournaments.sort((a,b)=>b.points-a.points||(b.goalsFor-b.goalsAgainst)-(a.goalsFor-a.goalsAgainst)).map(t=>`<tr><td><strong>${esc(t.name)}</strong></td><td>${t.played}</td><td>${t.wins}</td><td>${t.draws}</td><td>${t.losses}</td><td>${t.goalsFor}</td><td>${t.goalsAgainst}</td><td>${t.goalsFor-t.goalsAgainst}</td><td>${t.points}</td><td><button class="btn" data-rename-tournament="${t.id}">Назва</button> <button class="btn-red" data-delete-tournament="${t.id}">Видалити</button></td></tr>`).join('')}</tbody></table>
+      </div>
+    </div>`;
+};
+
+app.renderCalendar=()=>{
+  const loc=app.state.calendarLocation, y=app.state.year, m=app.state.month;
+  const last=new Date(y,m+1,0).getDate(); let rows=[];
+  for(let d=1; d<=last; d++){const dt=new Date(y,m,d); const wd=dt.getDay(); LOCATIONS.forEach(l=>{if((loc==='Усі'||l.name===loc)&&l.days.includes(wd)) rows.push({date:`${String(d).padStart(2,'0')}.${String(m+1).padStart(2,'0')}.${y}`, day:WEEKDAYS[wd], loc:l.name, trainer:l.trainer});});}
+  qs('#section-calendar').innerHTML=`
+    <div class="panel">
+      <div class="filters three">
+        <select id="calMonth">${MONTHS.map((mm,i)=>`<option value="${i}" ${i===m?'selected':''}>${mm}</option>`).join('')}</select>
+        <select id="calYear">${[y,y+1].map(v=>`<option ${v===y?'selected':''}>${v}</option>`).join('')}</select>
+        <select id="calLoc"><option>Усі</option>${LOCATIONS.map(l=>`<option ${loc===l.name?'selected':''}>${l.name}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="title">Календар тренувань</div>
+      <div class="table-wrap" style="margin-top:10px">
+        <table><thead><tr><th>Дата</th><th>День</th><th>Локація</th><th>Тренер</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.date}</td><td>${r.day}</td><td>${r.loc}</td><td>${r.trainer}</td></tr>`).join('')||'<tr><td colspan="4">Немає подій</td></tr>'}</tbody></table>
+      </div>
+    </div>`;
+  qs('#calMonth').onchange=e=>{app.state.month=+e.target.value; app.render();};
+  qs('#calYear').onchange=e=>{app.state.year=+e.target.value; app.render();};
+  qs('#calLoc').onchange=e=>{app.state.calendarLocation=e.target.value; app.renderCalendar();};
+};
+
+
+app.renderRent=()=>{
+  qs('#section-rent').innerHTML=`<div class="panel"><div class="row between"><div><div class="title">Аренда</div><div class="small">Контроль оплат шкіл і локацій</div></div></div></div>
+  <div class="list" style="margin-top:12px">${LOCATIONS.map(l=>{const r=app.state.rentals[l.name]||{paid:false,amount:1500,paidDate:'',note:''}; return `<div class="card"><div class="row between"><div><strong>${l.name}</strong><div class="small">${l.trainer}</div></div><span class="chip ${r.paid?'ok':'bad'}">${r.paid?'Оплачено':'Не оплачено'}</span></div><div class="row" style="margin-top:10px"><input type="number" value="${r.amount||1500}" data-rent-amount="${l.name}" style="max-width:140px"><input type="date" value="${r.paidDate||''}" data-rent-date="${l.name}" style="max-width:180px"><button class="btn ${r.paid?'btn-green':''}" data-rent-toggle="${l.name}">Статус</button></div></div>`;}).join('')}</div>`;
+};
+app.renderGroups=()=>{
+  qs('#section-groups').innerHTML=`<div class="list">${LOCATIONS.map(l=>{const ps=app.state.players.filter(p=>p.location===l.name); return `<div class="panel"><div class="row between"><div><div class="title">${l.name}</div><div class="small">${l.trainer}</div></div><span class="chip">${ps.length} дітей</span></div><div class="row" style="margin-top:10px"><span class="chip">Молодша: ${ps.filter(p=>p.group==='Молодша').length}</span><span class="chip">Старша: ${ps.filter(p=>p.group==='Старша').length}</span></div></div>`;}).join('')}</div>`;
+};
+
+app.renderTrainers=()=>{
+  const monthKey=app.payKey();
+  qs('#section-trainers').innerHTML=`
+    <div class="panel">
+      <div class="filters two">
+        <select id="trMonth">${MONTHS.map((m,i)=>`<option value="${i}" ${i===app.state.month?'selected':''}>${m}</option>`).join('')}</select>
+        <select id="trYear">${[app.state.year,app.state.year+1].map(y=>`<option ${y===app.state.year?'selected':''}>${y}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="list" style="margin-top:12px">
+      ${TRAINERS.map(t=>{const key=monthKey+'_'+t.id; const rec=app.state.payroll[key]||{paid:false,amount:t.salary}; return `<div class="panel"><div class="row between"><div><div class="title">${t.name}</div><div class="small">${t.role}</div></div><span class="chip ${rec.paid?'ok':'bad'}">${rec.paid?'Виплачено':'Не виплачено'}</span></div><div class="row" style="margin-top:10px"><input type="number" value="${rec.amount}" data-payroll-amount="${t.id}" style="max-width:140px"><button class="btn ${rec.paid?'btn-green':''}" data-payroll-toggle="${t.id}">Статус</button></div></div>`;}).join('')}
+    </div>`;
+  qs('#trMonth').onchange=e=>{app.state.month=+e.target.value; app.render();};
+  qs('#trYear').onchange=e=>{app.state.year=+e.target.value; app.render();};
+};
+
+
+app.renderTactics=()=>{
+  const sec = qs('#section-tactics'); if(!sec) return;
+  const scenes = app.state.tacticScenes || [];
+  const tools = [
+    ['move','Рух'],
+    ['arrow','Стрілка'],
+    ['cone','Конус'],
+    ['zone','Зона']
+  ];
+  sec.innerHTML = `
+    <div class="panel">
+      <div class="row between">
+        <div>
+          <div class="title">Тактика ULTIMATE</div>
+          <div class="small">Як у ProTrainUp: фішки, схеми, суперник, підписи, стрілки, конуси, зони, збереження сцен</div>
+        </div>
+        <div class="row">
+          <button class="btn" id="resetTacticBtn">Скинути</button>
+          <button class="btn-blue" id="fullscreenTacticBtn">Full screen</button>
+        </div>
+      </div>
+
+      <div class="filters two" style="margin-top:10px">
+        <input id="teamNameInput" value="${app.state.tacticTeamName}" placeholder="Назва своєї команди">
+        <input id="opponentNameInput" value="${app.state.tacticOpponentName}" placeholder="Назва суперника">
+      </div>
+
+      <div class="filters two" style="margin-top:10px">
+        <select id="tacticFormationSel">
+          <option ${app.state.tacticFormation==='4-3-3'?'selected':''}>4-3-3</option>
+          <option ${app.state.tacticFormation==='4-4-2'?'selected':''}>4-4-2</option>
+          <option ${app.state.tacticFormation==='3-5-2'?'selected':''}>3-5-2</option>
+          <option ${app.state.tacticFormation==='4-2-3-1'?'selected':''}>4-2-3-1</option>
+          <option ${app.state.tacticFormation==='3-4-3'?'selected':''}>3-4-3</option>
+        </select>
+        <div class="item"><strong>${app.state.tacticTeamName}</strong> vs <strong>${app.state.tacticOpponentName}</strong></div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        ${tools.map(t=>`<button class="tool-chip ${app.state.tacticTool===t[0]?'active':''}" data-tool="${t[0]}">${t[1]}</button>`).join('')}
+        <button class="btn" id="clearDrawBtn">Очистити малюнок</button>
+        <button class="btn" id="saveSceneBtn">Зберегти сцену</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:12px">
+      <div class="board-wrap">
+        <div id="tacticBoard" class="board">
+          <div class="pitch-outline"></div><div class="pitch-mid"></div><div class="pitch-circle"></div><div class="pitch-box-top"></div><div class="pitch-box-bot"></div>
+          <svg id="tacticSvg" class="board-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <marker id="arrowHead" markerWidth="8" markerHeight="8" refX="6.2" refY="3.5" orient="auto">
+                <polygon points="0 0, 7 3.5, 0 7" fill="#2e6bff"></polygon>
+              </marker>
+            </defs>
+            ${(app.state.tacticZones||[]).map(z=>`<rect x="${Math.min(z.x1,z.x2)}" y="${Math.min(z.y1,z.y2)}" width="${Math.abs(z.x2-z.x1)}" height="${Math.abs(z.y2-z.y1)}" fill="rgba(46,107,255,.16)" stroke="rgba(46,107,255,.95)" stroke-width=".45" rx="1.8"></rect>`).join('')}
+            ${(app.state.tacticLines||[]).map(l=>`<line x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}" stroke="#2e6bff" stroke-width=".8" stroke-dasharray="2 1.3" marker-end="url(#arrowHead)"></line>`).join('')}
+          </svg>
+          ${(app.state.tacticCones||[]).map(c=>`<div class="marker gold" data-cone="${c.id}" style="left:${c.x}%;top:${c.y}%;width:22px;height:22px;border-radius:8px;font-size:11px">▲</div>`).join('')}
+          ${app.state.tacticMarkers.map(m=>`
+            <div class="marker ${m.c}" data-tmarker="${m.id}" style="left:${m.x}%;top:${m.y}%">
+              ${m.n}
+              <div class="marker-label">${m.label || (m.team==='home' ? app.state.tacticTeamName : app.state.tacticOpponentName)}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-grid" style="margin-top:12px">
+      <div class="panel">
+        <div class="title">Швидке редагування</div>
+        <div class="small" style="margin-top:6px">Натисни на фішку → введи ім’я / номер. У режимі «Рух» можна тягнути пальцем.</div>
+      </div>
+      <div class="panel">
+        <div class="row between">
+          <div class="title">Сцени</div>
+          <div class="small">${scenes.length} збережень</div>
+        </div>
+        <div class="stack" style="margin-top:10px">
+          ${scenes.length ? scenes.map(s=>`
+            <div class="saved-item row between">
+              <div><strong>${s.name}</strong><div class="small">${s.formation}</div></div>
+              <div class="row">
+                <button class="btn" data-load-scene="${s.id}">Відкрити</button>
+                <button class="btn" data-del-scene="${s.id}">X</button>
+              </div>
+            </div>`).join('') : '<div class="small">Поки немає збережених сцен</div>'}
+        </div>
+      </div>
+    </div>
+  `;
+
+  const teamInp = qs('#teamNameInput');
+  const oppInp = qs('#opponentNameInput');
+  const formSel = qs('#tacticFormationSel');
+  const resetBtn = qs('#resetTacticBtn');
+  const fullBtn = qs('#fullscreenTacticBtn');
+  const clearBtn = qs('#clearDrawBtn');
+  const saveBtn = qs('#saveSceneBtn');
+
+  if(teamInp) teamInp.onchange = ()=>{ app.state.tacticTeamName = teamInp.value.trim() || 'FC Fenomen'; app.save(); app.renderTactics(); };
+  if(oppInp) oppInp.onchange = ()=>{ app.state.tacticOpponentName = oppInp.value.trim() || 'Суперник'; app.save(); app.renderTactics(); };
+  if(formSel) formSel.onchange = ()=>{
+    app.state.tacticFormation = formSel.value;
+    app.state.tacticMarkers = defaultTacticMarkers(app.state.tacticFormation, app.state.tacticMarkers);
+    app.save(); app.renderTactics();
+  };
+  if(resetBtn) resetBtn.onclick = ()=>{
+    app.state.tacticMarkers = defaultTacticMarkers(app.state.tacticFormation);
+    app.state.tacticLines = []; app.state.tacticZones = []; app.state.tacticCones = [];
+    app.save(); app.renderTactics();
+  };
+  if(clearBtn) clearBtn.onclick = ()=>{ app.state.tacticLines = []; app.state.tacticZones = []; app.state.tacticCones = []; app.save(); app.renderTactics(); };
+  if(saveBtn) saveBtn.onclick = ()=>{
+    const name = prompt('Назва сцени', `Сцена ${new Date().toLocaleString('uk-UA')}`);
+    if(name===null) return;
+    app.state.tacticScenes.unshift({
+      id:'scene_'+Date.now(),
+      name:name.trim() || 'Нова сцена',
+      formation:app.state.tacticFormation,
+      teamName:app.state.tacticTeamName,
+      opponentName:app.state.tacticOpponentName,
+      markers:JSON.parse(JSON.stringify(app.state.tacticMarkers)),
+      lines:JSON.parse(JSON.stringify(app.state.tacticLines||[])),
+      cones:JSON.parse(JSON.stringify(app.state.tacticCones||[])),
+      zones:JSON.parse(JSON.stringify(app.state.tacticZones||[]))
+    });
+    app.save(); app.renderTactics();
+  };
+  if(fullBtn) fullBtn.onclick = ()=>{
+    const board = qs('#tacticBoard');
+    if(board && board.requestFullscreen) board.requestFullscreen();
+  };
+
+  qsa('[data-tool]').forEach(b=>{
+    b.onclick = ()=>{ app.state.tacticTool = b.dataset.tool; app.save(); app.renderTactics(); };
+  });
+  qsa('[data-load-scene]').forEach(b=>{
+    b.onclick = ()=>{
+      const s = (app.state.tacticScenes||[]).find(x=>x.id===b.dataset.loadScene);
+      if(!s) return;
+      app.state.tacticFormation = s.formation;
+      app.state.tacticTeamName = s.teamName;
+      app.state.tacticOpponentName = s.opponentName;
+      app.state.tacticMarkers = JSON.parse(JSON.stringify(s.markers||[]));
+      app.state.tacticLines = JSON.parse(JSON.stringify(s.lines||[]));
+      app.state.tacticCones = JSON.parse(JSON.stringify(s.cones||[]));
+      app.state.tacticZones = JSON.parse(JSON.stringify(s.zones||[]));
+      app.save(); app.renderTactics();
+    };
+  });
+  qsa('[data-del-scene]').forEach(b=>{
+    b.onclick = ()=>{
+      app.state.tacticScenes = (app.state.tacticScenes||[]).filter(x=>x.id!==b.dataset.delScene);
+      app.save(); app.renderTactics();
+    };
+  });
+
+  bindTacticBoard();
+};
+
+function defaultTacticMarkers(formation, prev){
+  const keepLabels = {};
+  (prev||[]).forEach(m=>{ keepLabels[m.id] = m.label || ''; });
+  const base = {
+    '4-3-3': [
+      [50,90,'1','gold','home'], [18,72,'2','red','home'], [38,74,'3','red','home'], [62,74,'4','red','home'], [82,72,'5','red','home'],
+      [28,52,'6','red','home'], [50,48,'8','red','home'], [72,52,'10','red','home'], [20,24,'11','red','home'], [50,18,'9','red','home'], [80,24,'7','red','home'],
+    ],
+    '4-4-2': [
+      [50,90,'1','gold','home'], [18,72,'2','red','home'], [38,74,'3','red','home'], [62,74,'4','red','home'], [82,72,'5','red','home'],
+      [18,50,'11','red','home'], [40,52,'6','red','home'], [60,52,'8','red','home'], [82,50,'7','red','home'], [38,22,'9','red','home'], [62,22,'10','red','home'],
+    ],
+    '3-5-2': [
+      [50,90,'1','gold','home'], [26,72,'3','red','home'], [50,74,'4','red','home'], [74,72,'5','red','home'],
+      [10,52,'2','red','home'], [30,50,'6','red','home'], [50,48,'8','red','home'], [70,50,'10','red','home'], [90,52,'7','red','home'], [38,22,'9','red','home'], [62,22,'11','red','home'],
+    ],
+    '4-2-3-1': [
+      [50,90,'1','gold','home'], [18,72,'2','red','home'], [38,74,'3','red','home'], [62,74,'4','red','home'], [82,72,'5','red','home'],
+      [40,58,'6','red','home'], [60,58,'8','red','home'], [18,38,'11','red','home'], [50,34,'10','red','home'], [82,38,'7','red','home'], [50,18,'9','red','home'],
+    ],
+    '3-4-3': [
+      [50,90,'1','gold','home'], [26,72,'3','red','home'], [50,74,'4','red','home'], [74,72,'5','red','home'],
+      [14,50,'2','red','home'], [38,50,'6','red','home'], [62,50,'8','red','home'], [86,50,'7','red','home'],
+      [20,22,'11','red','home'], [50,18,'9','red','home'], [80,22,'10','red','home'],
+    ]
+  };
+  const home = (base[formation] || base['4-3-3']).map((m,i)=>({
+    id:'h'+(i+1), x:m[0], y:m[1], n:m[2], c:m[3], team:m[4], label:keepLabels['h'+(i+1)] || ''
+  }));
+  const away = home.map((m,i)=>({
+    id:'a'+(i+1), x:m.x, y:100-m.y, n:m.n, c:'blue', team:'away', label:keepLabels['a'+(i+1)] || ''
+  }));
+  return JSON.parse(JSON.stringify([...home, ...away]));
+}
+
+function bindTacticBoard(){
+  const board = qs('#tacticBoard'); if(!board) return;
+  let active = null;
+  let drawing = null;
+
+  board.addEventListener('pointerdown', e=>{
+    const tool = app.state.tacticTool || 'move';
+    const mk = e.target.closest('.marker');
+    const cone = e.target.closest('[data-cone]');
+    const rect = board.getBoundingClientRect();
+    const x = Math.max(2, Math.min(98, ((e.clientX - rect.left)/rect.width)*100));
+    const y = Math.max(2, Math.min(98, ((e.clientY - rect.top)/rect.height)*100));
+
+    if(tool === 'move' && mk){
+      active = {type:'marker', id:mk.dataset.tmarker};
+      mk.setPointerCapture && mk.setPointerCapture(e.pointerId);
+      return;
+    }
+    if(tool === 'move' && cone){
+      active = {type:'cone', id:cone.dataset.cone};
+      cone.setPointerCapture && cone.setPointerCapture(e.pointerId);
+      return;
+    }
+    if(tool === 'arrow'){
+      drawing = {type:'arrow', x1:x, y1:y, x2:x, y2:y};
+      return;
+    }
+    if(tool === 'zone'){
+      drawing = {type:'zone', x1:x, y1:y, x2:x, y2:y};
+      return;
+    }
+    if(tool === 'cone'){
+      app.state.tacticCones = app.state.tacticCones || [];
+      app.state.tacticCones.push({id:'cone_'+Date.now(), x, y});
+      app.save(); app.renderTactics();
+    }
+  });
+
+  board.addEventListener('pointermove', e=>{
+    const rect = board.getBoundingClientRect();
+    const x = Math.max(2, Math.min(98, ((e.clientX - rect.left)/rect.width)*100));
+    const y = Math.max(2, Math.min(98, ((e.clientY - rect.top)/rect.height)*100));
+
+    if(active){
+      if(active.type === 'marker'){
+        const m = app.state.tacticMarkers.find(z=>z.id===active.id);
+        if(m){
+          m.x = x; m.y = y;
+          const el = board.querySelector('[data-tmarker="'+active.id+'"]');
+          if(el){ el.style.left = x+'%'; el.style.top = y+'%'; }
+        }
+      } else if(active.type === 'cone'){
+        const c = (app.state.tacticCones||[]).find(z=>z.id===active.id);
+        if(c){
+          c.x = x; c.y = y;
+          const el = board.querySelector('[data-cone="'+active.id+'"]');
+          if(el){ el.style.left = x+'%'; el.style.top = y+'%'; }
+        }
+      }
+    }
+
+    if(drawing){
+      drawing.x2 = x; drawing.y2 = y;
+    }
+  });
+
+  board.addEventListener('pointerup', ()=>{
+    if(active){ app.save(); active = null; }
+    if(drawing){
+      if(drawing.type === 'arrow'){
+        app.state.tacticLines = app.state.tacticLines || [];
+        app.state.tacticLines.push({id:'line_'+Date.now(), ...drawing});
+      } else if(drawing.type === 'zone'){
+        app.state.tacticZones = app.state.tacticZones || [];
+        app.state.tacticZones.push({id:'zone_'+Date.now(), ...drawing});
+      }
+      drawing = null;
+      app.save(); app.renderTactics();
+    }
+  });
+
+  board.addEventListener('click', e=>{
+    const tool = app.state.tacticTool || 'move';
+    if(tool !== 'move') return;
+    const mk = e.target.closest('.marker'); if(!mk) return;
+    const m = app.state.tacticMarkers.find(z=>z.id===mk.dataset.tmarker); if(!m) return;
+    const val = prompt('Підпис / ім’я гравця', m.label || '');
+    if(val !== null){ m.label = val.trim(); app.save(); app.renderTactics(); }
+  });
+}
+
+
+app.render=()=>{
+  app.renderNav(); app.renderHero(); app.showSection();
+  app.renderDashboard(); app.renderPlayers(); app.renderAttendance(); app.renderPayments();
+  app.renderAnalytics(); app.renderDebtors(); app.renderMatchCenter(); app.renderSeasonStats();
+  app.renderTournaments(); app.renderCalendar(); app.renderRent(); app.renderGroups(); app.renderTrainers();
+  app.renderTactics(); app.renderAdmin(); app.renderExport();
+};
+
+
+app.downloadCsv=(rows,name)=>{
+  const csv=rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+app.exportAttendanceMonth=()=>{
+  const loc=app.state.attendanceLocation;
+  const rows=[['Ім’я','Локація','Місяць','Статус']];
+  app.state.players
+    .filter(p=>loc==='Усі'||p.location===loc)
+    .forEach(p=>rows.push([p.name,p.location,app.payKey(),app.getAttendanceStatus(p,loc)]));
+  app.downloadCsv(rows,`attendance_${app.payKey()}_${loc}.csv`);
+};
+app.exportDebtorsMonth=()=>{
+  const loc=app.state.debtorsLocation;
+  const rows=[['Ім’я','Локація','Статус','Сума','Пільга','Дата','Час']];
+  app.state.players
+    .filter(p=>(loc==='Усі'||p.location===loc)&&app.getPayment(p).status!=='Оплачено')
+    .forEach(p=>{
+      const r=app.getPayment(p);
+      rows.push([p.name,p.location,r.status,r.amount,r.benefitMode,r.paidDate||'',r.paidTime||'']);
+    });
+  app.downloadCsv(rows,`debtors_${app.payKey()}_${loc}.csv`);
+};
+
+app.exportJson=()=>{
+  const blob=new Blob([JSON.stringify(app.state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fenomen_hub_premium_v3.json'; a.click();
+};
+app.exportCsv=()=>{
+  const rows=[['Ім’я','Локація','Група','Статус','Пільга','Сума','Дата','Час']];
+  app.state.players.forEach(p=>{const r=app.getPayment(p); rows.push([p.name,p.location,p.group,r.status,r.benefitMode,r.amount,r.paidDate||'',r.paidTime||'']);});
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fenomen_hub_premium_v3.csv'; a.click();
+};
+app.importJson=file=>{
+  const fr=new FileReader();
+  fr.onload=()=>{try{app.state={...seed(),...JSON.parse(fr.result)}; app.save(); app.render(); alert('Імпортовано');}catch(e){alert('Помилка імпорту');}};
+  fr.readAsText(file);
+};
+
+document.addEventListener('click',e=>{
+  const tab=e.target.closest('[data-tab]'); if(tab){app.setTab(tab.dataset.tab); return;}
+  if(e.target.closest('[data-action="close-modal"]') || e.target.id==='modal'){qs('#modal').classList.remove('show'); return;}
+  if(e.target.closest('[data-action="export-json"]')){app.exportJson(); return;}
+  if(e.target.closest('[data-action="export-csv"]')){app.exportCsv(); return;}
+  if(e.target.closest('[data-action="import-open"]')){qs('#importFile').click(); return;}
+
+  const pay=e.target.closest('[data-pay]'); if(pay){const [id,status]=pay.dataset.pay.split('|'); app.setPaymentStatus(id,status); return;}
+  const att=e.target.closest('[data-att]'); if(att){const [id,status]=att.dataset.att.split('|'); app.markAttendance(id,status); return;}
+  const op=e.target.closest('[data-open-player]'); if(op){app.openPlayer(op.dataset.openPlayer); return;}
+  const sn=e.target.closest('[data-save-notes]'); if(sn){const p=app.state.players.find(x=>x.id===sn.dataset.saveNotes); if(p){p.notes=qs('#playerNotes').value; app.save(); qs('#modal').classList.remove('show');} return;}
+
+  const pt=e.target.closest('[data-payroll-toggle]'); if(pt){const key=app.payKey()+'_'+pt.dataset.payrollToggle; const t=TRAINERS.find(x=>x.id===pt.dataset.payrollToggle); app.state.payroll[key] ||= {paid:false,amount:t.salary}; app.state.payroll[key].paid=!app.state.payroll[key].paid; app.save(); app.renderTrainers(); return;}
+
+  const rb=e.target.closest('[data-reset-board]'); if(rb){app.state.markers=defaultMarkers(app.state.formation); app.save(); app.renderTactics(); return;}
+
+  const cm=e.target.closest('[data-create-match]'); if(cm){app.createMatch(); return;}
+  const om=e.target.closest('[data-open-match]'); if(om){app.state.selectedMatchId=om.dataset.openMatch; app.save(); app.renderMatchCenter(); return;}
+  const sm=e.target.closest('[data-save-match]'); if(sm){
+    const m=app.state.matches.find(x=>x.id===sm.dataset.saveMatch); if(!m) return;
+    m.opponent=qs('#mcOpponent').value; m.location=qs('#mcPlace').value; m.date=qs('#mcDate').value; m.time=qs('#mcTime').value; m.coach=qs('#mcCoach').value;
+    m.formation=qs('#mcFormation').value; m.notes=qs('#mcNotes').value; m.scoreUs=Number(qs('#mcScoreUs').value||0); m.scoreThem=Number(qs('#mcScoreThem').value||0);
+    m.tournamentId=qs('#mcTournament').value; m.mvp=qs('#mcMVP').value; app.save(); app.renderMatchCenter(); app.renderSeasonStats(); app.renderTournaments(); return;
+  }
+  const dm=e.target.closest('[data-delete-match]'); if(dm){app.state.matches=app.state.matches.filter(x=>x.id!==dm.dataset.deleteMatch); if(app.state.selectedMatchId===dm.dataset.deleteMatch) app.state.selectedMatchId=app.state.matches[0]?.id||null; app.save(); app.renderMatchCenter(); app.renderSeasonStats(); app.renderTournaments(); return;}
+  const tx=e.target.closest('[data-toggle-xi]'); if(tx){const [mid,pid]=tx.dataset.toggleXi.split('|'); const m=app.state.matches.find(x=>x.id===mid); if(m){const i=m.startingXI.indexOf(pid); if(i>=0) m.startingXI.splice(i,1); else m.startingXI.push(pid); m.activity[pid] ||= {goals:0,assists:0,minutes:0,status:'Не грав'}; if(m.startingXI.includes(pid)) m.activity[pid].status='Старт'; app.save(); app.renderMatchCenter();} return;}
+
+  const at=e.target.closest('[data-add-tournament]'); if(at){const name=prompt('Назва турніру'); if(name){app.state.tournaments.push({id:'t_'+Date.now(),name,played:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0,points:0}); app.save(); app.renderTournaments(); app.renderMatchCenter();} return;}
+  const rt=e.target.closest('[data-rename-tournament]'); if(rt){const t=app.state.tournaments.find(x=>x.id===rt.dataset.renameTournament); if(t){const name=prompt('Нова назва турніру',t.name); if(name){t.name=name.trim(); app.save(); app.renderTournaments(); app.renderMatchCenter();}} return;}
+  const dt=e.target.closest('[data-delete-tournament]'); if(dt){app.state.tournaments=app.state.tournaments.filter(x=>x.id!==dt.dataset.deleteTournament); app.state.matches.forEach(m=>{if(m.tournamentId===dt.dataset.deleteTournament) m.tournamentId='';}); app.save(); app.renderTournaments(); app.renderMatchCenter(); return;}
+});
+
+document.addEventListener('change',e=>{
+  if(e.target.id==='importFile' && e.target.files[0]) app.importJson(e.target.files[0]);
+  if(e.target.dataset.payrollAmount){const id=e.target.dataset.payrollAmount; const key=app.payKey()+'_'+id; const t=TRAINERS.find(x=>x.id===id); app.state.payroll[key] ||= {paid:false,amount:t.salary}; app.state.payroll[key].amount=Number(e.target.value)||0; app.save();}
+  if(e.target.dataset.benefitSelect){app.setBenefit(e.target.dataset.benefitSelect,e.target.value);}
+  if(e.target.dataset.customPrice){app.setCustomPrice(e.target.dataset.customPrice,e.target.value);}
+  if(e.target.dataset.matchStat){const [mid,pid,field]=e.target.dataset.matchStat.split('|'); const m=app.state.matches.find(x=>x.id===mid); if(m){m.activity[pid] ||= {goals:0,assists:0,minutes:0,status:'Не грав'}; m.activity[pid][field]=Number(e.target.value)||0; app.save(); app.renderSeasonStats();}}
+  if(e.target.dataset.matchStatus){const [mid,pid]=e.target.dataset.matchStatus.split('|'); const m=app.state.matches.find(x=>x.id===mid); if(m){m.activity[pid] ||= {goals:0,assists:0,minutes:0,status:'Не грав'}; m.activity[pid].status=e.target.value; app.save(); app.renderSeasonStats();}}
+});
+
+app.load();
+})();
+</script>
+</body>
+</html>
